@@ -5,23 +5,22 @@ Welcome to your new gem! In this directory, you'll find the files you need to be
 
 ## Installation
 
-Add this line to your application's Gemfile:
 
-```ruby
-gem 'rubycrap'
-```
+To build the gem you need to do:
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install rubycrap
+	$ gem build rubycrap.gemspec
 
 ## Usage
 
-TODO: Write usage instructions here
+Requirements: Simplecov (https://github.com/colszowka/simplecov) to generate a coverage file.
+e.g.
+	$ cd YOURPROJECT
+	$ COVERAGE=true rake test
+	=> Should result in coverage.json
+
+To generate the rubycrap metric you need to pass a simplecov .json file as the 1st argument
+	$ ruby -Ilib ./bin/rubycrap test/coverage.json
+
 
 ## Development
 
@@ -31,17 +30,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/crapflog. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ingojauch/rubycrap. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-
-
-gem build rubycrap.gemspec
-
-ruby -Ilib ./bin/rubycrap test/coverage.json
-

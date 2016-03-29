@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require "crapflog"
+
+
+read_filename=ARGV[0]
+
+if read_filename == nil
+	puts "Please specify an Simplecov coverage.json file as argument"
+	exit 1
+end
+
+Crapflog.run(read_filename)

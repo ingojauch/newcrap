@@ -12,14 +12,14 @@ To build the gem you need to do:
 
 ## Usage
 
-Requirements: Simplecov (https://github.com/colszowka/simplecov) to generate a coverage file.
+Requirements: Simplecov (https://github.com/colszowka/simplecov with 'simplecov-json' gem) to generate a coverage.json file.
 e.g.
-	$ cd YOURPROJECT
-	$ COVERAGE=true rake test
-	=> Should result in coverage.json
+	$ cd test/testapp;bundle install
+	$ COVERAGE=true rspec spec
+	=> Should result in coverage/coverage.json
 
 To generate the rubycrap metric you need to pass a simplecov .json file as the 1st argument
-	$ ruby -Ilib ./bin/rubycrap test/coverage.json
+	$ ruby -Ilib ./bin/rubycrap test/testapp/coverage/coverage.json
 
 
 ## Development

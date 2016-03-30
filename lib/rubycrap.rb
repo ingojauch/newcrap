@@ -12,9 +12,14 @@ class Rubycrap
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end
 
+
+	#
+	# => reads the sourcefile with an ast parser to get all the methods, then calculate the method coverage
+	#
 	def self.process_simplecov_file(file)
 	  #get filename with its coverage information
 	  filename = file["filename"]
+	  puts filename
 	  parse_method_coverage(file,filename)
 	end
 
@@ -27,7 +32,13 @@ class Rubycrap
 	  # first we get the coverage lines from simplecov
 	  # start position -1 and number of total lines (-1 if you dont want the end)
 	  total_lines = lastline-startline
-	  coveragelines = file["coverage"].slice(startline-1,total_lines)
+	  puts "total_lines: #{total_lines}"
+	  coveragelinestotal = file["coverage"]
+	  puts coveragelinestotal.count
+	  puts "startline #{startline}"
+	  puts "total_lines #{total_lines}"
+	  coveragelines = coveragelinestotal.slice(startline-1,total_lines)
+	  puts "coveragelines: #{coveragelines}"
 	  covered_lines = 0
 	  coveragelines.each do |line|
 	    if !(line.to_s.eql? "0" or line.to_s.eql? "")
@@ -39,20 +50,26 @@ class Rubycrap
 	end
 
 	def self.recursive_search_ast(file,ast)
-	  ast.children.each do |child|
-	    if child.class.to_s == "Parser::AST::Node"
-	      if (child.type.to_s == "def" or child.type.to_s == "defs")
-	        # puts "----------------"
-	        methodname = child.children[0].to_s
-	        startline = child.loc.line
-	        lastline = child.loc.last_line
-	        method_coverage = calculate_method_coverage(file,startline,lastline)
-	        @simplecov_information << {:name => methodname, :coverage => method_coverage , :line => startline}
-	      else
-	        recursive_search_ast(file,child)
-	      end
-	    end
-	  end
+		begin
+			ast.children.each do |child|
+				if child.class.to_s == "Parser::AST::Node"
+				  if (child.type.to_s == "def" or child.type.to_s == "defs")
+
+				    methodname = child.children[0].to_s
+				    startline = child.loc.line
+				    lastline = child.loc.last_line
+
+				    method_coverage = calculate_method_coverage(file,startline,lastline)
+
+				    @simplecov_information << {:name => methodname, :coverage => method_coverage , :line => startline}
+				  else
+				    recursive_search_ast(file,child)
+				  end
+				end
+			end
+		rescue
+			# maybe empty source code
+		end
 	end
 
 	def self.crap(score,coverage)
@@ -63,20 +80,24 @@ class Rubycrap
 	end
 
 	def self.calcualte_crap_from_flog(file)
-	  FlogCLI.load_plugins
-	  options = FlogCLI.parse_options "-qma"
-	  flogger = FlogCLI.new options
+		begin
+			FlogCLI.load_plugins
+			options = FlogCLI.parse_options "-qma"
+			flogger = FlogCLI.new options
 
-	  flogger.flog file["filename"]
-	  flogger.each_by_score nil do |class_method, score, call_list|
-	    startline = flogger.method_locations[class_method].split(":")[1]
-	    absolute_filename = flogger.method_locations[class_method].split(":")[0]
-	    #match simplecov line with startine form floc
-	    element = @simplecov_information.detect {|f| f[:line] == startline.to_i }
-	    test_coverage = element[:coverage]
-	    # puts "#{class_method},#{score},#{absolute_filename},#{startline},#{test_coverage},#{crap(score,test_coverage)}"
-	    @crap_methods << {:methodname => class_method, :flog_score => score , :filepath => absolute_filename, :startline => startline, :method_coverage => test_coverage, :crap_score => crap(score,test_coverage)}
-	  end
+			flogger.flog file["filename"]
+			flogger.each_by_score nil do |class_method, score, call_list|
+				startline = flogger.method_locations[class_method].split(":")[1]
+				absolute_filename = flogger.method_locations[class_method].split(":")[0]
+				#match simplecov line with startine form floc
+				element = @simplecov_information.detect {|f| f[:line] == startline.to_i }
+				test_coverage = element[:coverage]
+				# puts "#{class_method},#{score},#{absolute_filename},#{startline},#{test_coverage},#{crap(score,test_coverage)}"
+				@crap_methods << {:methodname => class_method, :flog_score => score , :filepath => absolute_filename, :startline => startline, :method_coverage => test_coverage, :crap_score => crap(score,test_coverage)}
+			end
+		rescue
+			# something went wrong with flog
+		end
 	end
 
 	def self.hasharray_to_html( hashArray )
@@ -96,15 +117,19 @@ class Rubycrap
 	def self.run(coveragefile)
 
 		coverage = JSON.parse(File.open(coveragefile, "r").read)
-		# file = coverage["files"].first
-		coverage["files"].each do |file|
 
+		# file = coverage["files"].first
+		#
+		# => get all the source filenames from the coverage file
+		#
+		puts "total files: #{coverage["files"].count}"
+		coverage["files"].each.with_index(1) do |file, index|
+		  puts "file nr. #{index}"
 		  process_simplecov_file(file)
 		  calcualte_crap_from_flog(file)
-
 		end
 
-		@sorted = @crap_methods.sort_by { |k| k[:crap_score] }
+		@sorted = @crap_methods.sort_by { |k| -k[:crap_score] }
 
 		@sorted.each do |element|
 		  puts "#{element[:crap_score].round} #{element[:methodname]} #{element[:filepath]}:#{element[:startline]}"

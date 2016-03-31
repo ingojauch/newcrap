@@ -19,7 +19,7 @@ e.g.
 	=> Should result in coverage/coverage.json
 
 To generate the rubycrap metric you need to pass a simplecov .json file as the 1st argument
-	$ ruby -Ilib ./bin/rubycrap test/testapp/coverage/coverage.json
+``$ ruby -Ilib ./bin/rubycrap test/testapp/coverage/coverage.json``
 
 
 ## Development

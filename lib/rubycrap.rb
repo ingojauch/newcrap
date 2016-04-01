@@ -95,7 +95,8 @@ class Rubycrap
 			flogger = FlogCLI.new options
 
 			flogger.flog file["filename"]
-			puts "flogger absolute_filename: #{file["filename"]}"
+			#puts "flogger absolute_filename: #{file["filename"]}"
+      logger.debug("flogger absolute_filename: #{file["filename"]}")
 			flogger.each_by_score nil do |class_method, score, call_list|
 				startline = flogger.method_locations[class_method].split(":")[1]
 				absolute_filename = flogger.method_locations[class_method].split(":")[0]
@@ -133,8 +134,11 @@ class Rubycrap
 	  return html
 	end
 
-	def self.run(coveragefile)
-		coverage = JSON.parse(File.open(coveragefile, "r").read)
+	def self.run(coveragefile,debug)
+    puts "DEBUG?"
+    puts debug
+    logger.level = Logger::WARN
+    coverage = JSON.parse(File.open(coveragefile, "r").read)
 
 		# file = coverage["files"].first
 		#

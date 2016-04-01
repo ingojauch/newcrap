@@ -1,3 +1,5 @@
+require 'logger'
+
 module Logging
   def logger
     Logging.logger

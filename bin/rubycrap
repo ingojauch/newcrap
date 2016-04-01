@@ -1,13 +1,20 @@
 #!/usr/bin/env ruby
 
 require "rubycrap"
+require 'logger'
 
-
-read_filename=ARGV[0]
+read_filename = ARGV[0]
 
 if read_filename == nil
 	puts "Please specify an Simplecov coverage.json file as argument"
 	exit 1
 end
 
-Rubycrap.run(read_filename)
+case ARGV[1]
+when '-d','--debug'
+  mode = Logger::DEBUG
+else
+  mode = Logger::WARN
+end
+
+Rubycrap.run(read_filename,mode)

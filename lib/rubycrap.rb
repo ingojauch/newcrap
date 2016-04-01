@@ -134,10 +134,8 @@ class Rubycrap
 	  return html
 	end
 
-	def self.run(coveragefile,debug)
-    puts "DEBUG?"
-    puts debug
-    logger.level = Logger::WARN
+	def self.run(coveragefile,mode)
+    logger.level = mode
     coverage = JSON.parse(File.open(coveragefile, "r").read)
 
 		# file = coverage["files"].first

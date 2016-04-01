@@ -8,8 +8,10 @@ class Rubycrap
 
 	@simplecov_information=[]
 	@crap_methods=[]
-  logger = Logger.new(STDOUT)
-  
+ 
+  def logger
+    @logger ||= Logger.new(STDOUT)
+  end
 	def self.minfo(object)
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end
@@ -179,3 +181,4 @@ class Rubycrap
 	end
 
 end
+

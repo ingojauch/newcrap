@@ -3,6 +3,7 @@ require 'flog_cli'
 require 'json'
 require 'builder'
 require 'logger'
+require 'rubycrap/logging'
 
 class Rubycrap
 include Logging

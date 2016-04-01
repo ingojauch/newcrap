@@ -21,7 +21,6 @@ class Rubycrap
 	  #get filename with its coverage information
 	  filename = file["filename"]
     logger.debug(filename)
-    #puts filename
 	  parse_method_coverage(file,filename)
 	end
 
@@ -36,14 +35,10 @@ class Rubycrap
 	  total_lines = lastline-startline
     logger.debug("startline #{startline}")
     logger.debug("latline #{lastline}")
-    #puts "startline #{startline}" 
-	  #puts "lastline: #{lastline}"
 	  coveragelinestotal = file["coverage"]
 	  	 
     logger.debug( "total_lines #{total_lines}")
-	  #puts "total_lines #{total_lines}"
 	  coveragelines = coveragelinestotal.slice(startline-1,total_lines)
-	  #puts "coveragelines: #{coveragelines}"
     logger.debug("coveragelines: #{coveragelines}")
 	  covered_lines = 0
 	  coveragelines.each do |line|
@@ -52,7 +47,6 @@ class Rubycrap
 	    end
 	  end
 	  method_coverage = covered_lines.to_f / total_lines.to_f
-	  #puts "method_coverage: #{method_coverage}"
     logger.debug("method_coverage: #{method_coverage}")
 	  return method_coverage
 	end
@@ -66,7 +60,6 @@ class Rubycrap
 				    methodname = child.children[0].to_s
 				    startline = child.loc.line
 				    lastline = child.loc.last_line
-				    #puts "\nmethodname: #{methodname}"
 				    logger.debug("\nmethodname: #{methodname}")
 				    method_coverage = calculate_method_coverage(file,startline,lastline)
 
@@ -95,23 +88,18 @@ class Rubycrap
 			flogger = FlogCLI.new options
 
 			flogger.flog file["filename"]
-			#puts "flogger absolute_filename: #{file["filename"]}"
       logger.debug("flogger absolute_filename: #{file["filename"]}")
 			flogger.each_by_score nil do |class_method, score, call_list|
 				startline = flogger.method_locations[class_method].split(":")[1]
 				absolute_filename = flogger.method_locations[class_method].split(":")[0]
-				#puts "flogger startline: #{startline}"
         logger.debug("flogger startline: #{startline}")
 				#match simplecov line with startine form floc
 				element = @simplecov_information.detect {|f| f[:startline] == startline.to_i }
 				if element.to_s == ""
-					#puts "no match with simplecov for logger class_method: #{class_method} startline: #{startline} "
           logger.debug("no match with simplecov for logger class_method: #{class_method} startline: #{startline} ")
 				else
-					#puts "flogger class_method: #{class_method} simplecov: #{element}"
           logger.debug("flogger class_method: #{class_method} simplecov: #{element}")
 					test_coverage = element[:coverage]
-					# puts "#{class_method},#{score},#{absolute_filename},#{startline},#{test_coverage},#{crap(score,test_coverage)}"
 					@crap_methods << {:methodname => class_method, :flog_score => score , :filepath => absolute_filename, :startline => startline, :method_coverage => test_coverage, :crap_score => crap(score,test_coverage)}
 				end
 			end
@@ -144,7 +132,6 @@ class Rubycrap
 		#
 		puts "total files: #{coverage["files"].count}"
 		coverage["files"].each.with_index(1) do |file, index|
-		  #puts "file nr. #{index}"
       logger.debug("file nr. #{index}")
 		  process_simplecov_file(file)
 		  calcualte_crap_from_flog(file)

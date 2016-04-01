@@ -2,13 +2,12 @@ require 'parser/current'
 require 'flog_cli'
 require 'json'
 require 'builder'
-require 'rubycrap/logging'
+require 'logger'
 
 class Rubycrap
-include Logging
 	@simplecov_information=[]
 	@crap_methods=[]
- 
+attr_reader :logger 
 	def self.minfo(object)
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end
@@ -134,7 +133,7 @@ include Logging
 	end
 
 	def self.run(coveragefile)
-
+    @logger = Logger.new(STDOUT)
 		coverage = JSON.parse(File.open(coveragefile, "r").read)
 
 		# file = coverage["files"].first

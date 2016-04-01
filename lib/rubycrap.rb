@@ -5,13 +5,10 @@ require 'builder'
 require 'logger'
 
 class Rubycrap
-
+include Logging
 	@simplecov_information=[]
 	@crap_methods=[]
  
-  def logger
-    @logger ||= Logger.new(STDOUT)
-  end
 	def self.minfo(object)
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end

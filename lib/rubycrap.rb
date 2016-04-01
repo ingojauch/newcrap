@@ -2,12 +2,14 @@ require 'parser/current'
 require 'flog_cli'
 require 'json'
 require 'builder'
+require 'logger'
 
 class Rubycrap
 
 	@simplecov_information=[]
 	@crap_methods=[]
-
+  logger = Logger.new(STDOUT)
+  
 	def self.minfo(object)
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end
@@ -19,7 +21,8 @@ class Rubycrap
 	def self.process_simplecov_file(file)
 	  #get filename with its coverage information
 	  filename = file["filename"]
-	  puts filename
+    logger.debug(filename)
+    #puts filename
 	  parse_method_coverage(file,filename)
 	end
 
@@ -32,13 +35,17 @@ class Rubycrap
 	  # first we get the coverage lines from simplecov
 	  # start position -1 and number of total lines (-1 if you dont want the end)
 	  total_lines = lastline-startline
-	  puts "startline #{startline}" 
-	  puts "lastline: #{lastline}"
+    logger.debug("startline #{startline}")
+    logger.debug("latline #{lastline}")
+    #puts "startline #{startline}" 
+	  #puts "lastline: #{lastline}"
 	  coveragelinestotal = file["coverage"]
 	  	 
-	  puts "total_lines #{total_lines}"
+    logger.debug( "total_lines #{total_lines}")
+	  #puts "total_lines #{total_lines}"
 	  coveragelines = coveragelinestotal.slice(startline-1,total_lines)
-	  puts "coveragelines: #{coveragelines}"
+	  #puts "coveragelines: #{coveragelines}"
+    logger.debug("coveragelines: #{coveragelines}")
 	  covered_lines = 0
 	  coveragelines.each do |line|
 	    if !(line.to_s.eql? "0" or line.to_s.eql? "")
@@ -46,7 +53,8 @@ class Rubycrap
 	    end
 	  end
 	  method_coverage = covered_lines.to_f / total_lines.to_f
-	  puts "method_coverage: #{method_coverage}"
+	  #puts "method_coverage: #{method_coverage}"
+    logger.debug("method_coverage: #{method_coverage}")
 	  return method_coverage
 	end
 
@@ -59,7 +67,8 @@ class Rubycrap
 				    methodname = child.children[0].to_s
 				    startline = child.loc.line
 				    lastline = child.loc.last_line
-				    puts "\nmethodname: #{methodname}"
+				    #puts "\nmethodname: #{methodname}"
+				    logger.debug("\nmethodname: #{methodname}")
 				    method_coverage = calculate_method_coverage(file,startline,lastline)
 
 				    @simplecov_information << {:name => methodname, :coverage => method_coverage , :startline => startline, :lastline => lastline}
@@ -91,13 +100,16 @@ class Rubycrap
 			flogger.each_by_score nil do |class_method, score, call_list|
 				startline = flogger.method_locations[class_method].split(":")[1]
 				absolute_filename = flogger.method_locations[class_method].split(":")[0]
-				puts "flogger startline: #{startline}"
+				#puts "flogger startline: #{startline}"
+        logger.debug("flogger startline: #{startline}")
 				#match simplecov line with startine form floc
 				element = @simplecov_information.detect {|f| f[:startline] == startline.to_i }
 				if element.to_s == ""
-					puts "no match with simplecov for logger class_method: #{class_method} startline: #{startline} "
+					#puts "no match with simplecov for logger class_method: #{class_method} startline: #{startline} "
+          logger.debug("no match with simplecov for logger class_method: #{class_method} startline: #{startline} ")
 				else
-					puts "flogger class_method: #{class_method} simplecov: #{element}"
+					#puts "flogger class_method: #{class_method} simplecov: #{element}"
+          logger.debug("flogger class_method: #{class_method} simplecov: #{element}")
 					test_coverage = element[:coverage]
 					# puts "#{class_method},#{score},#{absolute_filename},#{startline},#{test_coverage},#{crap(score,test_coverage)}"
 					@crap_methods << {:methodname => class_method, :flog_score => score , :filepath => absolute_filename, :startline => startline, :method_coverage => test_coverage, :crap_score => crap(score,test_coverage)}
@@ -132,7 +144,8 @@ class Rubycrap
 		#
 		puts "total files: #{coverage["files"].count}"
 		coverage["files"].each.with_index(1) do |file, index|
-		  puts "file nr. #{index}"
+		  #puts "file nr. #{index}"
+      logger.debug("file nr. #{index}")
 		  process_simplecov_file(file)
 		  calcualte_crap_from_flog(file)
 		end

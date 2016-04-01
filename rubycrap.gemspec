@@ -6,10 +6,10 @@ require 'rubycrap/version'
 Gem::Specification.new do |spec|
   spec.name          = "rubycrap"
   spec.version       = Rubycrap::VERSION
-  spec.authors       = ["Ingo Gerhard Jauch"]
-  spec.email         = ["ingo.jauch@gmail.com"]
+  spec.authors       = ["Ingo Gerhard Jauch","Gustavo Maestri"]
+  spec.email         = ["ingo.jauch@gmail.com","gumaestri@gmail.com"]
 
-  spec.summary       = ""
+  spec.summary       = "Ruby version of CRAP4J"
   spec.description   = ""
   spec.homepage      = ""
   spec.license       = "MIT"

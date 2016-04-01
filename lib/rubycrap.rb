@@ -7,12 +7,13 @@ require 'logger'
 class Rubycrap
 	@simplecov_information=[]
 	@crap_methods=[]
-attr_reader :logger 
 	def self.minfo(object)
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end
 
-
+  def self.logger
+    @logger ||= Logger.new(STDOUT)
+  end
 	#
 	# => reads the sourcefile with an ast parser to get all the methods, then calculate the method coverage
 	#
@@ -133,7 +134,6 @@ attr_reader :logger
 	end
 
 	def self.run(coveragefile)
-    @logger = Logger.new(STDOUT)
 		coverage = JSON.parse(File.open(coveragefile, "r").read)
 
 		# file = coverage["files"].first

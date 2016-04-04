@@ -1,30 +1,35 @@
 # Rubycrap
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rubycrap`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is an implementation/interpretation of Alberto Savoia's C.R.A.P. Metric for RUBY (https://www.artima.com/weblogs/viewpost.jsp?thread=215899).
+Rubycrap works with the "flog score" instead of the cyclomatic complexity because be belive it is more meaningful for Ruby.
+It should work with Ruby 1.9+
 
 
 ## Installation
 
-
 To build the gem you need to do:
-
+```
 	$ gem build rubycrap.gemspec
+```
 
 ## Usage
 
-Requirements: Simplecov (https://github.com/colszowka/simplecov with 'simplecov-json' gem) to generate a coverage.json file.
+Requirements: 
+
+Simplecov (https://github.com/colszowka/simplecov with 'simplecov-json' gem) to generate a coverage.json file.
 e.g.
+```
 	$ cd test/testapp;bundle install
 	$ COVERAGE=true rspec spec
+```
 	=> Should result in coverage/coverage.json
 
 To generate the rubycrap metric you need to pass a simplecov .json file as the 1st argument
-``$ ruby -Ilib ./bin/rubycrap test/testapp/coverage/coverage.json``
-
+```
+	$ ruby -Ilib ./bin/rubycrap test/testapp/coverage/coverage.json
+```
 
 ## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 

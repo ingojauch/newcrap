@@ -17,4 +17,4 @@ else
   mode = Logger::WARN
 end
 
-Rubycrap::Rubycrap.run(read_filename,mode)
+Rubycrap::Application.run(read_filename,mode)

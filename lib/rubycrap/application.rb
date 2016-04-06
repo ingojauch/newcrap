@@ -134,7 +134,7 @@ class Application
 		puts "total files: #{coverage["files"].count}"
 		coverage["files"].each.with_index(1) do |file, index|
       Rubycrap::logger.debug("file nr. #{index}")
-		  process_simplecov_file(file)
+		  @simplecov_information = Rubycrap::Coverage.new(file).process_simplecov_file
 		  calcualte_crap_from_flog(file)
 		end
 

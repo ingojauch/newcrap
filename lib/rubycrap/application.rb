@@ -5,7 +5,7 @@ require 'builder'
 require 'logger'
 
 module Rubycrap
-class Rubycrap
+class Application 
 	@simplecov_information=[]
 	@crap_methods=[]
 	def self.minfo(object)

@@ -2,7 +2,7 @@ require 'parser/current'
 require 'flog_cli'
 require 'json'
 require 'builder'
-require 'logging'
+require 'rubycrap/logging'
 
 module Rubycrap
 class Application 

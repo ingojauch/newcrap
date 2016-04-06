@@ -2,7 +2,7 @@ require 'parser/current'
 require 'flog_cli'
 require 'json'
 require 'builder'
-#require 'logger'
+require 'logging'
 
 module Rubycrap
 class Application 
@@ -12,8 +12,8 @@ class Application
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end
 
- # def self.logger
-  #  @logger ||= Logger.new(STDOUT)
+ # def self.Rubycrap::logger
+  #  @Rubycrap::logger ||= Logger.new(STDOUT)
  # end
 	#
 	# => reads the sourcefile with an ast parser to get all the methods, then calculate the method coverage
@@ -21,7 +21,7 @@ class Application
 	def self.process_simplecov_file(file)
 	  #get filename with its coverage information
 	  filename = file["filename"]
-    logger.debug(filename)
+    Rubycrap::logger.debug(filename)
 	  parse_method_coverage(file,filename)
 	end
 
@@ -34,13 +34,13 @@ class Application
 	  # first we get the coverage lines from simplecov
 	  # start position -1 and number of total lines (-1 if you dont want the end)
 	  total_lines = lastline-startline
-    logger.debug("startline #{startline}")
-    logger.debug("latline #{lastline}")
+    Rubycrap::logger.debug("startline #{startline}")
+    Rubycrap::logger.debug("latline #{lastline}")
 	  coveragelinestotal = file["coverage"]
 	  	 
-    logger.debug( "total_lines #{total_lines}")
+    Rubycrap::logger.debug( "total_lines #{total_lines}")
 	  coveragelines = coveragelinestotal.slice(startline-1,total_lines)
-    logger.debug("coveragelines: #{coveragelines}")
+    Rubycrap::logger.debug("coveragelines: #{coveragelines}")
 	  covered_lines = 0
 	  coveragelines.each do |line|
 	    if !(line.to_s.eql? "0" or line.to_s.eql? "")
@@ -48,7 +48,7 @@ class Application
 	    end
 	  end
 	  method_coverage = covered_lines.to_f / total_lines.to_f
-    logger.debug("method_coverage: #{method_coverage}")
+    Rubycrap::logger.debug("method_coverage: #{method_coverage}")
 	  return method_coverage
 	end
 
@@ -61,7 +61,7 @@ class Application
 				    methodname = child.children[0].to_s
 				    startline = child.loc.line
 				    lastline = child.loc.last_line
-				    logger.debug("\nmethodname: #{methodname}")
+				    Rubycrap::logger.debug("\nmethodname: #{methodname}")
 				    method_coverage = calculate_method_coverage(file,startline,lastline)
 
 				    @simplecov_information << {:name => methodname, :coverage => method_coverage , :startline => startline, :lastline => lastline}
@@ -86,20 +86,20 @@ class Application
 		begin
 			FlogCLI.load_plugins
 			options = FlogCLI.parse_options "-qma"
-			flogger = FlogCLI.new options
+			fRubycrap::logger = FlogCLI.new options
 
-			flogger.flog file["filename"]
-      logger.debug("flogger absolute_filename: #{file["filename"]}")
-			flogger.each_by_score nil do |class_method, score, call_list|
-				startline = flogger.method_locations[class_method].split(":")[1]
-				absolute_filename = flogger.method_locations[class_method].split(":")[0]
-        logger.debug("flogger startline: #{startline}")
+			fRubycrap::logger.flog file["filename"]
+      Rubycrap::logger.debug("fRubycrap::logger absolute_filename: #{file["filename"]}")
+			fRubycrap::logger.each_by_score nil do |class_method, score, call_list|
+				startline = fRubycrap::logger.method_locations[class_method].split(":")[1]
+				absolute_filename = fRubycrap::logger.method_locations[class_method].split(":")[0]
+        Rubycrap::logger.debug("fRubycrap::logger startline: #{startline}")
 				#match simplecov line with startine form floc
 				element = @simplecov_information.detect {|f| f[:startline] == startline.to_i }
 				if element.to_s == ""
-          logger.debug("no match with simplecov for logger class_method: #{class_method} startline: #{startline} ")
+          Rubycrap::logger.debug("no match with simplecov for Rubycrap::logger class_method: #{class_method} startline: #{startline} ")
 				else
-          logger.debug("flogger class_method: #{class_method} simplecov: #{element}")
+          Rubycrap::logger.debug("fRubycrap::logger class_method: #{class_method} simplecov: #{element}")
 					test_coverage = element[:coverage]
 					@crap_methods << {:methodname => class_method, :flog_score => score , :filepath => absolute_filename, :startline => startline, :method_coverage => test_coverage, :crap_score => crap(score,test_coverage)}
 				end
@@ -124,7 +124,7 @@ class Application
 	end
 
 	def self.run(coveragefile,mode)
-    logger.level = mode
+    Rubycrap::logger.level = mode
     coverage = JSON.parse(File.open(coveragefile, "r").read)
 
 		# file = coverage["files"].first
@@ -133,7 +133,7 @@ class Application
 		#
 		puts "total files: #{coverage["files"].count}"
 		coverage["files"].each.with_index(1) do |file, index|
-      logger.debug("file nr. #{index}")
+      Rubycrap::logger.debug("file nr. #{index}")
 		  process_simplecov_file(file)
 		  calcualte_crap_from_flog(file)
 		end

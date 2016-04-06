@@ -11,7 +11,7 @@ module Rubycritic
     end
 
     def process_simplecov_file
-      logger.debug(filename)
+      Rubycrap::logger.debug(filename)
       ast = parse_method_coverage
       search_methods(ast)
     end
@@ -28,7 +28,7 @@ module Rubycritic
             methodname = child.children[0].to_s
             startline = child.loc.line
             lastline = child.loc.last_line
-            logger.debug("\nmethodname: #{methodname}")
+            Rubycrap::logger.debug("\nmethodname: #{methodname}")
             method_coverage = calculate_method_coverage(file,startline,lastline)
             simplecov_information << {:name => methodname, 
                                       :coverage => method_coverage , 
@@ -39,7 +39,7 @@ module Rubycritic
           end
         end
       rescue
-        logger.debug("Coverage#search_method - empty source code")
+        Rubycrap::logger.debug("Coverage#search_method - empty source code")
       end
       simplecov_information
     end

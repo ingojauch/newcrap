@@ -16,18 +16,18 @@ module Rubycrap
       begin
         FlogCLI.load_plugins
         options = FlogCLI.parse_options "-qma"
-        flogger = FlogCLI.new options
-        flogger.flog file["filename"]
-        logger.debug("flogger absolute_filename: #{file["filename"]}")
-        flogger.each_by_score nil do |class_method, score, call_list|
-          startline = flogger.method_locations[class_method].split(":")[1]
-          absolute_filename = flogger.method_locations[class_method].split(":")[0]
-          logger.debug("flogger startline: #{startline}")
+        fRubycrap::logger = FlogCLI.new options
+        fRubycrap::logger.flog file["filename"]
+        Rubycrap::logger.debug("fRubycrap::logger absolute_filename: #{file["filename"]}")
+        fRubycrap::logger.each_by_score nil do |class_method, score, call_list|
+          startline = fRubycrap::logger.method_locations[class_method].split(":")[1]
+          absolute_filename = fRubycrap::logger.method_locations[class_method].split(":")[0]
+          Rubycrap::logger.debug("fRubycrap::logger startline: #{startline}")
           element = simplecov_information.detect {|f| f[:startline] == startline.to_i}
           if element.to_s == ""
-            logger.debug("no match with simplecov for logger class_method: #{class_method} startline: #{startline} ")
+            Rubycrap::logger.debug("no match with simplecov for Rubycrap::logger class_method: #{class_method} startline: #{startline} ")
           else
-            logger.debug("flogger class_method: #{class_method} simplecov: #{element}")
+            Rubycrap::logger.debug("fRubycrap::logger class_method: #{class_method} simplecov: #{element}")
             test_coverage = element[:coverage]
             crap_methods << {:methodname => class_method, 
                              :flog_score => score ,
@@ -38,7 +38,7 @@ module Rubycrap
           end
         end
       rescue
-        logger.debug("something went wrong with flog")
+        Rubycrap::logger.debug("something went wrong with flog")
       end
     end
   end

@@ -2,7 +2,7 @@ require 'parser/current'
 require 'flog_cli'
 require 'json'
 require 'builder'
-require 'logger'
+#require 'logger'
 
 module Rubycrap
 class Application 
@@ -12,9 +12,9 @@ class Application
 	  puts ">supports: #{(object.methods  - Object.methods).inspect}\n"
 	end
 
-  def self.logger
-    @logger ||= Logger.new(STDOUT)
-  end
+ # def self.logger
+  #  @logger ||= Logger.new(STDOUT)
+ # end
 	#
 	# => reads the sourcefile with an ast parser to get all the methods, then calculate the method coverage
 	#

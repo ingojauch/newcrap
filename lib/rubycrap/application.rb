@@ -38,7 +38,7 @@ module Rubycrap
           if element.to_s == ""
             Rubycrap::logger.debug("no match with simplecov for logger class_method: #{class_method} startline: #{startline} ")
           else
-            Rubycrap::logger.debug("fRubycrap::logger class_method: #{class_method} simplecov: #{element}")
+            Rubycrap::logger.debug("flogger class_method: #{class_method} simplecov: #{element}")
             test_coverage = element[:coverage]
             @crap_methods << {:methodname => class_method, :flog_score => score , :filepath => absolute_filename, :startline => startline, :method_coverage => test_coverage, :crap_score => crap(score,test_coverage)}
           end
@@ -68,7 +68,7 @@ module Rubycrap
     puts "total files: #{coverage["files"].count}"
     coverage["files"].each.with_index(1) do |file, index|
       Rubycrap::logger.debug("file nr. #{index}")
-      @simplecov_information = Rubycrap::Coverage.new(file).process_simplecov_file
+      @simplecov_information.concat(Rubycrap::Coverage.new(file).process_simplecov_file)
       calcualte_crap_from_flog(file)
     end
 

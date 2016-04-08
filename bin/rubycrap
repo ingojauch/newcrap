@@ -6,8 +6,8 @@ require 'logger'
 read_filename = ARGV[0]
 
 if read_filename == nil
-	puts "Please specify an Simplecov coverage.json file as argument"
-	exit 1
+  puts "Please specify an Simplecov coverage.json file as argument"
+  exit 1
 end
 
 case ARGV[1]
@@ -17,4 +17,4 @@ else
   mode = Logger::WARN
 end
 
-Rubycrap.run(read_filename,mode)
+Rubycrap::Application.new(read_filename,mode).execute

@@ -1,6 +1,6 @@
 require 'logger'
 
-module Logging
+module Rubycrap
   def logger
     Logging.logger
   end

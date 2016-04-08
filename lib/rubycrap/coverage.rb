@@ -16,7 +16,6 @@ module Rubycrap
       Rubycrap::logger.debug(filename)
       ast = parse_method_coverage
       search_methods(ast)
-      Rubycrap::logger.debug("Coverage#process - #{simplecov_information}")
       @simplecov_information
     end
 

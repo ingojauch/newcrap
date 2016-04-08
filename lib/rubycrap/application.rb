@@ -21,13 +21,12 @@ module Rubycrap
     end
 
     def execute
-      @simplecov_information = []
       @crap_methods = []
       puts "total files: #{@coverage_files.count}"
       @coverage_files.each.with_index(1) do |file, index|
         Rubycrap::logger.debug("file nr. #{index}")
-        @simplecov_information.concat(Rubycrap::Coverage.new(file).process_simplecov_file)
-        @crap_methods.concat(Rubycrap::Crap.new(@simplecov_information,file).calculate_with_flog)
+        simplecov_information = Rubycrap::Coverage.new(file).process_simplecov_file
+        @crap_methods.concat(Rubycrap::Crap.new(simplecov_information,file).calculate_with_flog)
       end
       show_results
     end

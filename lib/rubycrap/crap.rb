@@ -7,7 +7,7 @@ module Rubycrap
     def initialize(simplecov_information,file)
       @simplecov_information = simplecov_information
       @file = file
-      @simplecov_information = []
+      @crap_methods= []
     end
 
     def crap(complexity,coverage)

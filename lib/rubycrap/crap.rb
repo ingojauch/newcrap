@@ -7,6 +7,7 @@ module Rubycrap
     def initialize(simplecov_information,file)
       @simplecov_information = simplecov_information
       @file = file
+      @simplecov_information = []
     end
 
     def crap(complexity,coverage)
@@ -14,7 +15,6 @@ module Rubycrap
     end
 
     def calculate_with_flog
-      crap_methods = []
       begin
         flog_file(file["filename"])
         @flogger.each_by_score nil do |class_method, score, call_list|
@@ -25,7 +25,7 @@ module Rubycrap
           else
             Rubycrap::logger.debug("flogger class_method: #{class_method} simplecov: #{element}")
             test_coverage = element[:coverage]
-            crap_methods << {:methodname => class_method, 
+            @crap_methods << {:methodname => class_method, 
                              :flog_score => score ,
                              :filepath => absolute_filename, 
                              :startline => startline, 
@@ -33,10 +33,11 @@ module Rubycrap
                              :crap_score => crap(score,test_coverage)}
           end
         end
+        @crap_methods
       rescue
         #Rubycrap::logger.debug("something went wrong with flog")
+        @crap_methods
       end
-      crap_methods
     end
 
     private

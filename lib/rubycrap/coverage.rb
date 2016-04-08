@@ -9,12 +9,15 @@ module Rubycrap
       @file = file
       @filename = file["filename"]
       @coverage = file["coverage"]
+      @simplecov_information = []
     end
 
     def process_simplecov_file
       Rubycrap::logger.debug(filename)
       ast = parse_method_coverage
       search_methods(ast)
+      Rubycrap::logger.debug("Coverage#process - #{simplecov_information}")
+      @simplecov_information
     end
 
     def parse_method_coverage
@@ -22,16 +25,15 @@ module Rubycrap
     end
 
     def search_methods(ast)
-      simplecov_information = []
       begin
         ast.children.each do |child|
-          if(method?(child))
+          if(def_method?(child))
             methodname = child.children[0].to_s
             startline = child.loc.line
             lastline = child.loc.last_line
             Rubycrap::logger.debug("\nmethodname: #{methodname}")
             method_coverage = calculate_method_coverage(startline,lastline)
-            simplecov_information << {:name => methodname, 
+            @simplecov_information << {:name => methodname, 
                                       :coverage => method_coverage , 
                                       :startline => startline, 
                                       :lastline => lastline}
@@ -42,7 +44,6 @@ module Rubycrap
       rescue
         #Rubycrap::logger.debug("Coverage#search_method - empty source code")
       end
-      simplecov_information
     end
     
     def calculate_method_coverage(startline,lastline)
@@ -63,7 +64,7 @@ module Rubycrap
     end
 
     private
-    def method?(child)
+    def def_method?(child)
       child.class.to_s == "Parser::AST::Node" && 
         (child.type.to_s == "def" or child.type.to_s == "defs")
     end

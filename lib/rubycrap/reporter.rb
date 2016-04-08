@@ -51,15 +51,15 @@ module Rubycrap
 
     def formated_result(element)
       @crap_element = element
-      "#{crap_score}".ljust(6) + "#{method_name}  ---> #{file_path}:#{start_line}"
+      "#{crap_score} | #{method_name} |  #{file_path}:#{start_line}"
     end
 
     def crap_score
-      @crap_element[:crap_score].round
+      @crap_element[:crap_score].round.to_s.ljust(6)
     end
 
     def method_name
-      @crap_element[:methodname]
+      @crap_element[:methodname].ljust(50)
     end
 
     def file_path

@@ -3,11 +3,12 @@ require 'rubycrap/logging'
 module Rubycrap
   class Coverage
 
-    attr_reader :file,:filename
+    attr_reader :file,:filename, :coverage
 
     def initialize(file)
       @file = file
       @filename = file["filename"]
+      @coverage = file["coverage"]
     end
 
     def process_simplecov_file
@@ -39,17 +40,15 @@ module Rubycrap
           end
         end
       rescue
-        Rubycrap::logger.debug("Coverage#search_method - empty source code")
+        #Rubycrap::logger.debug("Coverage#search_method - empty source code")
       end
       simplecov_information
     end
     
     def calculate_method_coverage(startline,lastline)
       total_lines = lastline-startline
-      Rubycrap::logger.debug("startline #{startline}")
-      Rubycrap::logger.debug("latline #{lastline}")
-      Rubycrap::logger.debug( "total_lines #{total_lines}")
-      coveragelinestotal = file["coverage"]
+      Rubycrap::logger.debug("Startline #{startline} | Lastline #{lastline} | Total_lines #{total_lines}")
+      coveragelinestotal = coverage
       coveragelines = coveragelinestotal.slice(startline-1,total_lines)
       Rubycrap::logger.debug("coveragelines: #{coveragelines}")
       covered_lines = 0

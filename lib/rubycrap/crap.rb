@@ -3,9 +3,10 @@ require 'rubycrap/logging'
 
 module Rubycrap
   class Crap
-    attr_reader :simplecov_information
-    def initialize(simplecov_information)
+    attr_reader :simplecov_information, :file
+    def initialize(simplecov_information,file)
       @simplecov_information = simplecov_information
+      @file = file
     end
 
     def crap(complexity,coverage)
@@ -13,21 +14,16 @@ module Rubycrap
     end
 
     def calculate_with_flog
+      crap_methods = []
       begin
-        FlogCLI.load_plugins
-        options = FlogCLI.parse_options "-qma"
-        fRubycrap::logger = FlogCLI.new options
-        fRubycrap::logger.flog file["filename"]
-        Rubycrap::logger.debug("fRubycrap::logger absolute_filename: #{file["filename"]}")
-        fRubycrap::logger.each_by_score nil do |class_method, score, call_list|
-          startline = fRubycrap::logger.method_locations[class_method].split(":")[1]
-          absolute_filename = fRubycrap::logger.method_locations[class_method].split(":")[0]
-          Rubycrap::logger.debug("fRubycrap::logger startline: #{startline}")
+        flog_file(file["filename"])
+        @flogger.each_by_score nil do |class_method, score, call_list|
+          Rubycrap::logger.debug("flogger startline: #{startline}")
           element = simplecov_information.detect {|f| f[:startline] == startline.to_i}
           if element.to_s == ""
-            Rubycrap::logger.debug("no match with simplecov for Rubycrap::logger class_method: #{class_method} startline: #{startline} ")
+            Rubycrap::logger.debug("no match with simplecov for flogger class_method: #{class_method} startline: #{startline} ")
           else
-            Rubycrap::logger.debug("fRubycrap::logger class_method: #{class_method} simplecov: #{element}")
+            Rubycrap::logger.debug("flogger class_method: #{class_method} simplecov: #{element}")
             test_coverage = element[:coverage]
             crap_methods << {:methodname => class_method, 
                              :flog_score => score ,
@@ -38,8 +34,27 @@ module Rubycrap
           end
         end
       rescue
-        Rubycrap::logger.debug("something went wrong with flog")
+        #Rubycrap::logger.debug("something went wrong with flog")
       end
+      crap_methods
+    end
+
+    private
+    
+    def flog_file(filename)
+      FlogCLI.load_plugins
+      options = FlogCLI.parse_options "-qma"
+      @flogger = FlogCLI.new options
+      @flogger.flog filename
+      Rubycrap::logger.debug("flogger absolute_filename: #{filename}")
+    end
+
+    def startline
+      @flogger.method_locations[class_method].split(":")[1]
+    end
+
+    def absolute_filename
+      @flogger.method_locations[class_method].split(":")[0]
     end
   end
 end

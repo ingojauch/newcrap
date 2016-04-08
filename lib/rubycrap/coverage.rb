@@ -52,12 +52,19 @@ module Rubycrap
       coveragelines = coveragelinestotal.slice(startline-1,total_lines)
       Rubycrap::logger.debug("coveragelines: #{coveragelines}")
       covered_lines = 0
+      not_covered_lines = 0
       coveragelines.each do |line|
         if coverage?(line)
           covered_lines += 1
         end
+        if (line.to_s.eql? "0")
+          not_covered_line += 1
+        end
       end
-      method_coverage = covered_lines.to_f / total_lines.to_f
+      valid_total_lines = covered_lines + not_covered_lines
+      method_coverage = covered_lines.to_f / valid_total_lines.to_f
+      Rubycrap::logger.debug("covered_lines: #{covered_lines}")
+      Rubycrap::logger.debug("not_covered_lines: #{not_covered_lines}")
       Rubycrap::logger.debug("method_coverage: #{method_coverage}")
       method_coverage
     end

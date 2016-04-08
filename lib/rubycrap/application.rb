@@ -33,7 +33,7 @@ module Rubycrap
 
     def show_results
       reporter = Rubycrap::Reporter.new(@crap_methods)
-      puts "\nRESULTS"
+      puts "\nTOP 10 RESULTS"
       reporter.console
       reporter.html
       puts "THE END"

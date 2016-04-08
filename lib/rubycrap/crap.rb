@@ -19,8 +19,9 @@ module Rubycrap
         @flogger.each_by_score nil do |class_method, score, call_list|
           startline = @flogger.method_locations[class_method].split(":")[1]
           absolute_filename = @flogger.method_locations[class_method].split(":")[0]
+          flog_methodname = class_method.split("#")[1]
           Rubycrap::logger.debug("flogger startline: #{startline}")
-          element = simplecov_information.detect {|f| f[:startline] == startline.to_i}
+          element = simplecov_information.detect {|f| f[:startline] == startline.to_i && f[:name] == flog_methodname}
           if element.to_s == ""
             Rubycrap::logger.debug("no match with simplecov for flogger class_method: #{class_method} startline: #{startline} ")
           else

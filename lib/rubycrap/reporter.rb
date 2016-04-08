@@ -9,28 +9,11 @@ module Rubycrap
     end
 
     def html
-      # buidler sucks
-      # it doesnt do thead and tbody
-      # and th: isnt accepted in datatables
-      # <script   src="https://code.jquery.com/jquery-2.2.2.min.js"
-      # integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI="
-      # crossorigin="anonymous"></script>
-      # <script
-      # src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js"
-      # crossorigin="anonymous"></script>
-      # <link rel="stylesheet" type="text/css"
-      # href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
-      # <script type="text/javascript">
-      # $(document).ready(function(){
-      # $('#myTable').DataTable();
-      # });
-      # </script>
-      # <table id="myTable">
       File.open("CRAP.html", 'w') { |file| file.write(build_html) }
     end
 
     def console
-      crap_methods_by_score.each do |element|
+      crap_methods_by_score.each(10) do |element|
         puts formated_result(element)
       end
     end
@@ -38,14 +21,41 @@ module Rubycrap
     private
 
     def build_html
-      headers = @crap_methods_by_score.inject([]){|a,x| a |= x.keys ; a}
-      html = Builder::XmlMarkup.new(:indent => 2)
-      html.table {
-        html.tr { headers.each{|h| html.th(h)} }
-        @crap_methods_by_score.each do |row|
-          html.tr { row.values.each { |value| html.td(value) }}
-        end
-      }
+      html = Array.new(0)
+      html.push('<script   src="https://code.jquery.com/jquery-2.2.2.min.js"   integrity="sha256-36cp2Co+/62rEAAYHLmRCPIych47CvdM+uTBJwSzWjI="   crossorigin="anonymous"></script>')
+      html.push('<script   src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.js" crossorigin="anonymous"></script>')
+      html.push('<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">')
+      html.push('<script type="text/javascript">')
+      html.push('  $(document).ready(function(){')
+      html.push('    $(\'#myTable\').DataTable();')
+      html.push('  });')
+      html.push('</script>')
+      html.push('<table id="myTable">')
+      html.push('<thead>')
+      html.push('  <tr>')
+      html.push('    <th>methodname</th>')
+      html.push('    <th>flog_score</th>')
+      html.push('    <th>filepath</th>')
+      html.push('    <th>startline</th>')
+      html.push('    <th>method_coverage</th>')
+      html.push('    <th>crap_score</th>')
+      html.push('  </tr>')
+      html.push('</thead>')
+      html.push('<tbody>')
+      html.push('')
+
+      @sorted.each do |element|
+        html.push('<tr>')
+        html.push("  <td>#{element[:methodname]}</td>")
+        html.push("  <td>#{element[:flog_score]}</td>")
+        html.push("  <td>#{element[:filepath]}</td>")
+        html.push("  <td>#{element[:startline]}</td>")
+        html.push("  <td>#{element[:method_coverage]}</td>")
+        html.push("  <td>#{element[:crap_score]}</td>")
+        html.push('</tr>')
+      end
+      html.push('</tbody>')
+      html.push('</table>')
       html
     end
 

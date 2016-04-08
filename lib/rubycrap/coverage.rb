@@ -24,10 +24,18 @@ module Rubycrap
     end
 
     def search_methods(ast)
-      begin
+	if (ast.nil?)
+		return nil
+	end
+	if(!ast.respond_to?(:children))
+		return nil
+	end
         ast.children.each do |child|
-          if(def_method?(child))
-            methodname = child.children[0].to_s
+        if(child.class.to_s == "Parser::AST::Node")
+	Rubycrap::logger.debug("TYPE AST - #{child.type.to_s}")
+	end 
+	 if(def_method?(child))
+            methodname = child.children[0].to_s == "(self)" ? child.children[1].to_s : child.children[0].to_s
             startline = child.loc.line
             lastline = child.loc.last_line
             Rubycrap::logger.debug("\nmethodname: #{methodname}")
@@ -40,9 +48,6 @@ module Rubycrap
             search_methods(child)
           end
         end
-      rescue
-        #Rubycrap::logger.debug("Coverage#search_method - empty source code")
-      end
     end
     
     def calculate_method_coverage(startline,lastline)
@@ -54,11 +59,11 @@ module Rubycrap
       covered_lines = 0
       not_covered_lines = 0
       coveragelines.each do |line|
-        if coverage?(line)
+	if coverage?(line)
           covered_lines += 1
         end
         if (line.to_s.eql? "0")
-          not_covered_line += 1
+          not_covered_lines += 1
         end
       end
       valid_total_lines = covered_lines + not_covered_lines

@@ -56,7 +56,7 @@ module Rubycrap
       end
       html.push('</tbody>')
       html.push('</table>')
-      html
+      html.join("\n")
     end
 
     def formated_result(element)

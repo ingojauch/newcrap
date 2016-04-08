@@ -13,7 +13,7 @@ module Rubycrap
     end
 
     def console
-      crap_methods_by_score.each(10) do |element|
+      crap_methods_by_score[0..10].each do |element|
         puts formated_result(element)
       end
     end
@@ -44,7 +44,7 @@ module Rubycrap
       html.push('<tbody>')
       html.push('')
 
-      @sorted.each do |element|
+      @crap_methods_by_score.each do |element|
         html.push('<tr>')
         html.push("  <td>#{element[:methodname]}</td>")
         html.push("  <td>#{element[:flog_score]}</td>")

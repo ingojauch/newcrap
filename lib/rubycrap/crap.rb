@@ -15,9 +15,10 @@ module Rubycrap
     end
 
     def calculate_with_flog
-      begin
         flog_file(file["filename"])
         @flogger.each_by_score nil do |class_method, score, call_list|
+          startline = @flogger.method_locations[class_method].split(":")[1]
+          absolute_filename = @flogger.method_locations[class_method].split(":")[0]
           Rubycrap::logger.debug("flogger startline: #{startline}")
           element = simplecov_information.detect {|f| f[:startline] == startline.to_i}
           if element.to_s == ""
@@ -34,10 +35,6 @@ module Rubycrap
           end
         end
         @crap_methods
-      rescue
-        #Rubycrap::logger.debug("something went wrong with flog")
-        @crap_methods
-      end
     end
 
     private
@@ -50,12 +47,5 @@ module Rubycrap
       Rubycrap::logger.debug("flogger absolute_filename: #{filename}")
     end
 
-    def startline
-      @flogger.method_locations[class_method].split(":")[1]
-    end
-
-    def absolute_filename
-      @flogger.method_locations[class_method].split(":")[0]
-    end
   end
 end
